@@ -22,7 +22,7 @@ export DEPLOYED_CONTRACT_ADDRESS=<deployed_addr> // 0x..
 npx hardhat verify --network $HARDHAT_DEPLOY_NETWORK $DEPLOYED_CONTRACT_ADDRESS "wow!"
 ```
 
-``` Files description
-./accounts.backup
+``` Files description (auto generated)
+./accounts.backup.txt
 - Storage for all available testing accounts.
 ```
