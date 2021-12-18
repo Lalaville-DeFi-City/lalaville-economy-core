@@ -4,3 +4,7 @@ node_modules
 artifacts
 cache
 .idea
+accounts.backup
+*.env
+**/*.DS_store
+*.DS_store
