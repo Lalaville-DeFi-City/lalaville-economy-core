@@ -5,6 +5,6 @@ artifacts
 cache
 .idea
 accounts.backup
-*.env
+.env
 **/*.DS_store
 *.DS_store
