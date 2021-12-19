@@ -2,8 +2,13 @@
   "name": "lalaville-economy-core",
   "description": "LalLaVille token economy core",
   "version": "0.0.1 beta",
-  "keywords": ["crypto economy", "token", "smart contract"],
+  "keywords": [
+    "crypto economy",
+    "token",
+    "smart contract"
+  ],
   "dependencies": {
+    "@openzeppelin/contracts": "^4.4.1",
     "hardhat": "^2.7.1"
   },
   "devDependencies": {

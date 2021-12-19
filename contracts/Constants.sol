@@ -5,8 +5,10 @@ pragma solidity ^0.8.4;
 contract Constants {
     enum BuildContractStatus {
         inProgress,
+        suspended,
         completed,
-        declined
+        declined,
+        closed
     }
 
     struct BuildContract {
