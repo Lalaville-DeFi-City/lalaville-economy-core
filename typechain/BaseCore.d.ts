@@ -11,7 +11,6 @@ import {
   PopulatedTransaction,
   BaseContract,
   ContractTransaction,
-  Overrides,
   PayableOverrides,
   CallOverrides,
 } from "ethers";
@@ -20,51 +19,21 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { FunctionFragment, EventFragment, Result } from "@ethersproject/abi";
 import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
-interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
+interface BaseCoreInterface extends ethers.utils.Interface {
   functions: {
-    "allocate(address,uint256)": FunctionFragment;
-    "balanceOf(address)": FunctionFragment;
     "balances(address)": FunctionFragment;
-    "buildContractRewards(address)": FunctionFragment;
-    "buildContracts(bytes32)": FunctionFragment;
-    "busyBuilders(address)": FunctionFragment;
     "bytes32ToString(bytes32)": FunctionFragment;
-    "changeBuilder(bytes32,bool,address)": FunctionFragment;
     "contractOwner()": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
     "getTotalBorrowPool()": FunctionFragment;
     "random()": FunctionFragment;
-    "replyContractRequest(bytes32,bool)": FunctionFragment;
-    "requestContract(uint256,address)": FunctionFragment;
-    "rewardBuilder(bytes32)": FunctionFragment;
     "uintToString(uint256)": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "allocate",
-    values: [string, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "balanceOf", values: [string]): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
-  encodeFunctionData(
-    functionFragment: "buildContractRewards",
-    values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "buildContracts",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "busyBuilders",
-    values: [string]
-  ): string;
   encodeFunctionData(
     functionFragment: "bytes32ToString",
     values: [BytesLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "changeBuilder",
-    values: [BytesLike, boolean, string]
   ): string;
   encodeFunctionData(
     functionFragment: "contractOwner",
@@ -80,43 +49,13 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "random", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "replyContractRequest",
-    values: [BytesLike, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "requestContract",
-    values: [BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rewardBuilder",
-    values: [BytesLike]
-  ): string;
-  encodeFunctionData(
     functionFragment: "uintToString",
     values: [BigNumberish]
   ): string;
 
-  decodeFunctionResult(functionFragment: "allocate", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "buildContractRewards",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "buildContracts",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "busyBuilders",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "bytes32ToString",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "changeBuilder",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -129,18 +68,6 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "random", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "replyContractRequest",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "requestContract",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rewardBuilder",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "uintToString",
     data: BytesLike
@@ -192,7 +119,7 @@ export type RewardBuilderEvent = TypedEvent<
   [string, BigNumber] & { performer: string; reward: BigNumber }
 >;
 
-export class LaLaVilleEconomyToken extends BaseContract {
+export class BaseCore extends BaseContract {
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
@@ -233,49 +160,15 @@ export class LaLaVilleEconomyToken extends BaseContract {
     toBlock?: string | number | undefined
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
-  interface: LaLaVilleEconomyTokenInterface;
+  interface: BaseCoreInterface;
 
   functions: {
-    allocate(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
     balances(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
-
-    buildContractRewards(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber]>;
-
-    buildContracts(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, string, string] & {
-        reward: BigNumber;
-        status: number;
-        performer: string;
-        customer: string;
-      }
-    >;
-
-    busyBuilders(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
     bytes32ToString(
       _bytes32: BytesLike,
       overrides?: CallOverrides
     ): Promise<[string]>;
-
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
 
     contractOwner(overrides?: CallOverrides): Promise<[string]>;
 
@@ -290,69 +183,18 @@ export class LaLaVilleEconomyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber] & { rand: BigNumber }>;
 
-    replyContractRequest(
-      contractId: BytesLike,
-      accept: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    requestContract(
-      rewardTokens: BigNumberish,
-      performer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    rewardBuilder(
-      contractId: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     uintToString(
       v: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[string] & { ret: string }>;
   };
 
-  allocate(
-    to: string,
-    amount: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
   balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  buildContractRewards(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
-  buildContracts(
-    arg0: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, number, string, string] & {
-      reward: BigNumber;
-      status: number;
-      performer: string;
-      customer: string;
-    }
-  >;
-
-  busyBuilders(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
   bytes32ToString(
     _bytes32: BytesLike,
     overrides?: CallOverrides
   ): Promise<string>;
-
-  changeBuilder(
-    contractId: BytesLike,
-    removeContract: boolean,
-    newBuilder: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
 
   contractOwner(overrides?: CallOverrides): Promise<string>;
 
@@ -365,66 +207,15 @@ export class LaLaVilleEconomyToken extends BaseContract {
 
   random(overrides?: CallOverrides): Promise<BigNumber>;
 
-  replyContractRequest(
-    contractId: BytesLike,
-    accept: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  requestContract(
-    rewardTokens: BigNumberish,
-    performer: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  rewardBuilder(
-    contractId: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   uintToString(v: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
-    allocate(
-      to: string,
-      amount: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    buildContractRewards(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    buildContracts(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, number, string, string] & {
-        reward: BigNumber;
-        status: number;
-        performer: string;
-        customer: string;
-      }
-    >;
-
-    busyBuilders(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
     bytes32ToString(
       _bytes32: BytesLike,
       overrides?: CallOverrides
     ): Promise<string>;
-
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     contractOwner(overrides?: CallOverrides): Promise<string>;
 
@@ -433,23 +224,6 @@ export class LaLaVilleEconomyToken extends BaseContract {
     getTotalBorrowPool(overrides?: CallOverrides): Promise<BigNumber>;
 
     random(overrides?: CallOverrides): Promise<BigNumber>;
-
-    replyContractRequest(
-      contractId: BytesLike,
-      accept: boolean,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    requestContract(
-      rewardTokens: BigNumberish,
-      performer: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    rewardBuilder(
-      contractId: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     uintToString(v: BigNumberish, overrides?: CallOverrides): Promise<string>;
   };
@@ -567,38 +341,11 @@ export class LaLaVilleEconomyToken extends BaseContract {
   };
 
   estimateGas: {
-    allocate(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    balanceOf(owner: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-    buildContractRewards(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    buildContracts(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    busyBuilders(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     bytes32ToString(
       _bytes32: BytesLike,
       overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     contractOwner(overrides?: CallOverrides): Promise<BigNumber>;
@@ -612,23 +359,6 @@ export class LaLaVilleEconomyToken extends BaseContract {
 
     random(overrides?: CallOverrides): Promise<BigNumber>;
 
-    replyContractRequest(
-      contractId: BytesLike,
-      accept: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    requestContract(
-      rewardTokens: BigNumberish,
-      performer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    rewardBuilder(
-      contractId: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     uintToString(
       v: BigNumberish,
       overrides?: CallOverrides
@@ -636,33 +366,7 @@ export class LaLaVilleEconomyToken extends BaseContract {
   };
 
   populateTransaction: {
-    allocate(
-      to: string,
-      amount: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    balanceOf(
-      owner: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     balances(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    buildContractRewards(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    buildContracts(
-      arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    busyBuilders(
       arg0: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -670,13 +374,6 @@ export class LaLaVilleEconomyToken extends BaseContract {
     bytes32ToString(
       _bytes32: BytesLike,
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     contractOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -691,23 +388,6 @@ export class LaLaVilleEconomyToken extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     random(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    replyContractRequest(
-      contractId: BytesLike,
-      accept: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    requestContract(
-      rewardTokens: BigNumberish,
-      performer: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    rewardBuilder(
-      contractId: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
 
     uintToString(
       v: BigNumberish,

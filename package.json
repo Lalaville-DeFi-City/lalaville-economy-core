@@ -9,7 +9,8 @@
   ],
   "dependencies": {
     "@openzeppelin/contracts": "^4.4.1",
-    "hardhat": "^2.7.1"
+    "hardhat": "^2.7.1",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.0",

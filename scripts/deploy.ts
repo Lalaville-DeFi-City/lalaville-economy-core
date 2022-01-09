@@ -5,9 +5,10 @@
 // Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
 
-const SIGNER_ADDR = "0x8626f6940e2eb28930efb4cef49b2d1f2c9c1199";
-
 async function main() {
+  const signers = await ethers.getSigners();
+  const signer = signers[signers.length - 1];
+
   // Hardhat always runs the compile task when running scripts with its command
   // line interface.
   //
@@ -17,7 +18,7 @@ async function main() {
 
   // We get the contract to deploy
   const EconomyToken = await ethers.getContractFactory("LaLaVilleEconomyToken");
-  const economyToken = await EconomyToken.deploy(SIGNER_ADDR);
+  const economyToken = await EconomyToken.deploy(signer.address);
 
   await economyToken.deployed();
 

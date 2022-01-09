@@ -1,10 +1,18 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.4;
 
 contract EventEmitter {
-    event DepositSuccess(address indexed _from, uint _value);
-    event BuildContractCreated(string contractId);
-    event BuildContractConfirmed(string contractId);
-    event RewardBuilder(address builder);
+    // General events.
+    event DepositSuccess(address indexed from, uint256 value);
+
+    // Contract base events.
+    event BuildContractCreated(string contractId, address owner, address busyBuilder, bool setBusy);
+    event BuildContractConfirmed(string contractId, address performer);
+    event BuildContractDeclined(string contractId, address performer);
+
+    // Contract other events.
+    event RewardBuilder(address performer, uint256 reward);
+    event BuilderChanged(string contractId, address newBuilder);
+
 }

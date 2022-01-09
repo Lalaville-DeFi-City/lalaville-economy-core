@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 
 pragma solidity ^0.8.4;
 
@@ -14,7 +14,7 @@ contract Constants {
     struct BuildContract {
         uint reward;
         BuildContractStatus status;
-        address builder;
-        address ceo;
+        address performer;
+        address customer;
     }
 }
