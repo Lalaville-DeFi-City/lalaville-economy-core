@@ -7,28 +7,32 @@ import "./BaseCore.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract LaLaVilleEconomyToken is BaseCore, Constants {
-    uint256 private initialTokensDistribution = 10000;
+    uint256 constant public INITIAL_TOKENS_SUPPLY_AMOUNT = 10000;
     // Map all busy builders.
     mapping (address => bool) public busyBuilders;
     // Map all created contracts.
     mapping (bytes32 => BuildContract) public buildContracts;
     // Map rewards to contractId.
     mapping (address => uint256) public buildContractRewards;
-
-    // TODO: decide if we want to use IERC20(contractOwner).
+    address private deployer;
+    // TODO: ? IERC20(contractOwner).
 
     constructor(address owner) {
         contractOwner = owner;
-        balances[contractOwner] = initialTokensDistribution;
+        balances[contractOwner] = INITIAL_TOKENS_SUPPLY_AMOUNT;
+        deployer = msg.sender;
     }
 
     function balanceOf(address owner) public view returns (uint256) {
         return balances[owner];
     }
 
+    function getContractById(bytes32 contractId) public view returns (BuildContract memory _contr) {
+        return buildContracts[contractId];
+    }
+
     function allocate(address to, uint256 amount) public {
-        // TODO: fix allocation.
-        // require (msg.sender == contractOwner, "Only owner can call it.");
+        require (msg.sender == deployer, "Only owner can call it.");
         require (balances[contractOwner] > amount, "Insufficient funds.");
         balances[to] += amount;
         balances[contractOwner] -= amount;
@@ -81,7 +85,7 @@ contract LaLaVilleEconomyToken is BaseCore, Constants {
     }
 
     // expected caller role: customer
-    function changeBuilder(bytes32 contractId, bool removeContract, address newBuilder) public {
+    /* function changeBuilder(bytes32 contractId, bool removeContract, address newBuilder) public {
         BuildContract memory _contract = buildContracts[contractId];
 
         if (removeContract) {
@@ -97,13 +101,14 @@ contract LaLaVilleEconomyToken is BaseCore, Constants {
 
             emit BuilderChanged(bytes32ToString(contractId), newBuilder);
         }
-    }
+    } */
 
     // expected caller role: customer
     function rewardBuilder(bytes32 contractId) public {
         BuildContract memory _contract = buildContracts[contractId];
 
         require(_contract.reward > 0, "Cannot find requested contract.");
+        require(msg.sender == _contract.customer, "Only owner can confirm reward.");
         _contract.status = BuildContractStatus.completed;
         busyBuilders[_contract.performer] = false;
 

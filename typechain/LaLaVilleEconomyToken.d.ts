@@ -22,6 +22,7 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
   functions: {
+    "INITIAL_TOKENS_SUPPLY_AMOUNT()": FunctionFragment;
     "allocate(address,uint256)": FunctionFragment;
     "balanceOf(address)": FunctionFragment;
     "balances(address)": FunctionFragment;
@@ -29,9 +30,9 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
     "buildContracts(bytes32)": FunctionFragment;
     "busyBuilders(address)": FunctionFragment;
     "bytes32ToString(bytes32)": FunctionFragment;
-    "changeBuilder(bytes32,bool,address)": FunctionFragment;
     "contractOwner()": FunctionFragment;
     "deposit(uint256)": FunctionFragment;
+    "getContractById(bytes32)": FunctionFragment;
     "getTotalBorrowPool()": FunctionFragment;
     "random()": FunctionFragment;
     "replyContractRequest(bytes32,bool)": FunctionFragment;
@@ -40,6 +41,10 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
     "uintToString(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "INITIAL_TOKENS_SUPPLY_AMOUNT",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "allocate",
     values: [string, BigNumberish]
@@ -63,16 +68,16 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
     values: [BytesLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "changeBuilder",
-    values: [BytesLike, boolean, string]
-  ): string;
-  encodeFunctionData(
     functionFragment: "contractOwner",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "deposit",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getContractById",
+    values: [BytesLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getTotalBorrowPool",
@@ -96,6 +101,10 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "INITIAL_TOKENS_SUPPLY_AMOUNT",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "allocate", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
@@ -116,14 +125,14 @@ interface LaLaVilleEconomyTokenInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "changeBuilder",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "contractOwner",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getContractById",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "getTotalBorrowPool",
     data: BytesLike
@@ -236,6 +245,10 @@ export class LaLaVilleEconomyToken extends BaseContract {
   interface: LaLaVilleEconomyTokenInterface;
 
   functions: {
+    INITIAL_TOKENS_SUPPLY_AMOUNT(
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     allocate(
       to: string,
       amount: BigNumberish,
@@ -270,19 +283,33 @@ export class LaLaVilleEconomyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string]>;
 
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
     contractOwner(overrides?: CallOverrides): Promise<[string]>;
 
     deposit(
       amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    getContractById(
+      contractId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        [BigNumber, number, string, string] & {
+          reward: BigNumber;
+          status: number;
+          performer: string;
+          customer: string;
+        }
+      ] & {
+        _contr: [BigNumber, number, string, string] & {
+          reward: BigNumber;
+          status: number;
+          performer: string;
+          customer: string;
+        };
+      }
+    >;
 
     getTotalBorrowPool(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -312,6 +339,8 @@ export class LaLaVilleEconomyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[string] & { ret: string }>;
   };
+
+  INITIAL_TOKENS_SUPPLY_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
 
   allocate(
     to: string,
@@ -347,19 +376,24 @@ export class LaLaVilleEconomyToken extends BaseContract {
     overrides?: CallOverrides
   ): Promise<string>;
 
-  changeBuilder(
-    contractId: BytesLike,
-    removeContract: boolean,
-    newBuilder: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
   contractOwner(overrides?: CallOverrides): Promise<string>;
 
   deposit(
     amount: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  getContractById(
+    contractId: BytesLike,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, number, string, string] & {
+      reward: BigNumber;
+      status: number;
+      performer: string;
+      customer: string;
+    }
+  >;
 
   getTotalBorrowPool(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -385,6 +419,8 @@ export class LaLaVilleEconomyToken extends BaseContract {
   uintToString(v: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   callStatic: {
+    INITIAL_TOKENS_SUPPLY_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
+
     allocate(
       to: string,
       amount: BigNumberish,
@@ -419,16 +455,21 @@ export class LaLaVilleEconomyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<string>;
 
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
     contractOwner(overrides?: CallOverrides): Promise<string>;
 
     deposit(amount: BigNumberish, overrides?: CallOverrides): Promise<void>;
+
+    getContractById(
+      contractId: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, number, string, string] & {
+        reward: BigNumber;
+        status: number;
+        performer: string;
+        customer: string;
+      }
+    >;
 
     getTotalBorrowPool(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -567,6 +608,8 @@ export class LaLaVilleEconomyToken extends BaseContract {
   };
 
   estimateGas: {
+    INITIAL_TOKENS_SUPPLY_AMOUNT(overrides?: CallOverrides): Promise<BigNumber>;
+
     allocate(
       to: string,
       amount: BigNumberish,
@@ -594,18 +637,16 @@ export class LaLaVilleEconomyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
     contractOwner(overrides?: CallOverrides): Promise<BigNumber>;
 
     deposit(
       amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    getContractById(
+      contractId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTotalBorrowPool(overrides?: CallOverrides): Promise<BigNumber>;
@@ -636,6 +677,10 @@ export class LaLaVilleEconomyToken extends BaseContract {
   };
 
   populateTransaction: {
+    INITIAL_TOKENS_SUPPLY_AMOUNT(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     allocate(
       to: string,
       amount: BigNumberish,
@@ -672,18 +717,16 @@ export class LaLaVilleEconomyToken extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    changeBuilder(
-      contractId: BytesLike,
-      removeContract: boolean,
-      newBuilder: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
     contractOwner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     deposit(
       amount: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    getContractById(
+      contractId: BytesLike,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTotalBorrowPool(
